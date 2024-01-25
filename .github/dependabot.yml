@@ -9,7 +9,6 @@ updates:
     directory: '/'
     schedule:
       interval: weekly
-    reviewers:
-      - 'albelium/rss-feedly-maintainers'
     labels:
       - 'dependencies'
+      - 'ignore-for-release'
