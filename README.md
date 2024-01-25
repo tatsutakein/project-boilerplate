@@ -1,4 +1,4 @@
-# MyTemplateProject
+# Project boilerplate
 
 プロジェクト作成時のテンプレートです.
 
