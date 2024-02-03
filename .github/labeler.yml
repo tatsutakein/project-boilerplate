@@ -1,49 +1,84 @@
+# noinspection YAMLSchemaValidation
 version: 1
 
 labels:
   # Type labels
-  - label: "@type/feature"
-    title: '^(:sparkles:|:tada:|:art:).*'
-  - label: "@type/improve"
-    title: '^(:\+1:|:recycle:|:rocket:).*'
-  - label: "@type/fix"
-    title: '^:bug:.*'
-  - label: "@type/docs"
-    title: '^:books:.*'
-    files:
-      - "apps/docs/.+"
-      - "docs/.+"
   - label: "@type/build"
-    title: '^(:wrench:|:up:).*'
-    files:
-      - "**/package.json"
-      - ".tool-versions"
-      - "tools/.+"
+    title: '^build(?:\(.+\))?\!?:'
+
   - label: "@type/ci"
-    title: '^:green_heart:.*'
+    title: '^ci(?:\(.+\))?\!?:'
     files:
       - '\.github/.+'
+      - "scripts/.+"
+      - "tools/.+"
 
-  # Package labels
-  - label: "@apps/frontend"
+  - label: "@type/docs"
+    title: '^docs:(?:\(.+\))?\!?:'
     files:
-      - "apps/web/.+"
-      - "apps/frontend/.+"
+      - "docs/.+"
+      - "**/README.md$"
+
+  - label: "@type/feature"
+    title: '^feat:(?:\(.+\))?\!?:'
+
+  - label: "@type/fix"
+    title: '^fix:(?:\(.+\))?\!?:'
+
+  - label: "@type/improve"
+    title: '^(style|refactor|perf)(?:\(.+\))?\!?:'
+
+  # Top Package labels
   - label: "@apps/backend"
     files:
       - "apps/backend/.+"
-  - label: "@packages/eslint-config"
-    files:
-      - "packages/eslint-config-custom/.+"
-  - label: "@packages/prettier-config"
-    files:
-      - "packages/prettier-config/.+"
-  - label: "@packages/tsconfig"
-    files:
-      - "packages/tsconfig/.+"
-  - label: "@packages/ui"
-    files:
-      - "packages/ui/.+"
 
-  # Feature labels
-  # TBD
+  - label: "@apps/frontend"
+    files:
+      - "apps/frontend/.+"
+
+  # Core Package labels
+  - label: "@core/common"
+    files:
+      - "core/common/.+"
+
+  - label: "@core/data"
+    files:
+      - "core/data/.+"
+
+  - label: "@core/database"
+    files:
+      - "core/database/.+"
+
+  - label: "@core/datastore"
+    files:
+      - "core/datastore/.+"
+
+  - label: "@core/designsystem"
+    files:
+      - "core/designsystem/.+"
+
+  - label: "@core/domain"
+    files:
+      - "core/domain/.+"
+
+  - label: "@core/model"
+    files:
+      - "core/model/.+"
+
+  - label: "@core/network"
+    files:
+      - "core/network/.+"
+
+  - label: "@core/testing"
+    files:
+      - "core/testing/.+"
+
+  # Feature Package labels
+  - label: "@feature/top"
+    files:
+      - "feature/top/.+"
+
+  - label: "@feature/auth"
+    files:
+      - "feature/auth/.+"
