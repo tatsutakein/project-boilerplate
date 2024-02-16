@@ -71,6 +71,24 @@ fi
 
 ##############################################################################
 ##
+##  husky
+##
+##############################################################################
+echo ""
+echo "🚀 husky install: Start"
+if type bun >/dev/null 2>&1; then
+  if bun husky; then
+    echo "✅ husky install: Success"
+  else
+    echo "🚫 husky install: Failed"
+  fi
+else
+  echo "⚠️ husky install: Skip bun because it could not be found."
+  echo "⚠️ husky install: This may be due to the fact that the mise installation has not been completed."
+fi
+
+##############################################################################
+##
 ##  Finish
 ##
 ##############################################################################
