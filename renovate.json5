@@ -11,4 +11,14 @@
     "dependencies"
   ],
   "rangeStrategy": "pin",
+  "packageRules": [
+    {
+      "matchManagers": [
+        "github-actions",
+      ],
+      "labels": [
+        "ignore for release",
+      ]
+    }
+  ]
 }
