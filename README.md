@@ -23,6 +23,14 @@ After git clone, run the following command
 $ make bs
 ```
 
+### Add template
+
+You can generate code from a template using plop by executing the following command.
+
+```shell
+$ bun plop
+```
+
 ## Development Environment
 
 TBD

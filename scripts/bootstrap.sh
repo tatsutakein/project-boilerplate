@@ -35,6 +35,24 @@ echo "🚀 Git commit message: Finished"
 
 ##############################################################################
 ##
+##  mise
+##
+##############################################################################
+echo ""
+echo "🚀 mise install: Start"
+if type mise >/dev/null 2>&1; then
+  if mise install; then
+    echo "✅ mise install: Success"
+  else
+    echo "🚫 mise install: Failed"
+  fi
+else
+  echo "⚠️ mise install: Skip mise because it could not be found."
+  echo "⚠️ mise install: See https://mise.jdx.dev/getting-started.html for installation."
+fi
+
+##############################################################################
+##
 ##  Finish
 ##
 ##############################################################################
