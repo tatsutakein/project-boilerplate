@@ -53,6 +53,42 @@ fi
 
 ##############################################################################
 ##
+##  bun
+##
+##############################################################################
+echo ""
+echo "🚀 bun install: Start"
+if type bun >/dev/null 2>&1; then
+  if bun install; then
+    echo "✅ bun install: Success"
+  else
+    echo "🚫 bun install: Failed"
+  fi
+else
+  echo "⚠️ bun install: Skip bun because it could not be found."
+  echo "⚠️ bun install: This may be due to the fact that the mise installation has not been completed."
+fi
+
+##############################################################################
+##
+##  husky
+##
+##############################################################################
+echo ""
+echo "🚀 husky install: Start"
+if type bun >/dev/null 2>&1; then
+  if bun husky; then
+    echo "✅ husky install: Success"
+  else
+    echo "🚫 husky install: Failed"
+  fi
+else
+  echo "⚠️ husky install: Skip bun because it could not be found."
+  echo "⚠️ husky install: This may be due to the fact that the mise installation has not been completed."
+fi
+
+##############################################################################
+##
 ##  Finish
 ##
 ##############################################################################
