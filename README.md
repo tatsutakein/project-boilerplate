@@ -63,7 +63,7 @@ TBD
 Thanks to our wonderful contributors!
 
 <a href="https://github.com/tatsutakein/project-boilerplate/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=tatsutakein/project-boilerplate" />
+  <img src="https://contrib.rocks/image?repo=tatsutakein/project-boilerplate" alt="Contributors" />
 </a>
 
 ## License
