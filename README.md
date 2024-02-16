@@ -23,6 +23,13 @@ After git clone, run the following command
 $ make bs
 ```
 
+What is being processed by bootstrap is shown below.
+
+- Configuring git commit message templates
+- Installation of various tools by mise
+- Installation of dependencies by bun
+- Installation of husky by bun
+
 ### Add template
 
 You can generate code from a template using plop by executing the following command.
