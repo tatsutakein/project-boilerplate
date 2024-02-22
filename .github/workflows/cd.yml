@@ -10,5 +10,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  changed:
+  release:
     uses: ./.github/workflows/wc-release.yml
+    with:
+      gh-app-id: ${{ vars.BOT_APP_ID }}
+    secrets:
+      gh-app-private-key: ${{ secrets.BOT_PRIVATE_KEY }}
