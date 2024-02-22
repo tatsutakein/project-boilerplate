@@ -1,0 +1,14 @@
+name: 'Continuous Delivery'
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changed:
+    uses: ./.github/workflows/wc-release.yml
