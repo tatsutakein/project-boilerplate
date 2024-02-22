@@ -2,6 +2,7 @@
   "name": "@tatsutakein/project-boilerplate",
   "type": "module",
   "scripts": {
+    "clean": "git clean -xdf node_modules",
     "plop": "plop"
   },
   "devDependencies": {
