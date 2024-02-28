@@ -66,6 +66,10 @@ Thanks to our wonderful contributors!
   <img src="https://contrib.rocks/image?repo=tatsutakein/project-boilerplate" alt="Contributors" />
 </a>
 
+## Repo Activity
+
+![Repobeats](https://repobeats.axiom.co/api/embed/b6cb2d91ae08a4b2f4ae2a14f8471ece656a781b.svg "Repobeats analytics image")
+
 ## License
 
 boilerplate is distributed under the terms of the MIT License. See the [license](LICENSE) for more
