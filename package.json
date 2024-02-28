@@ -1,5 +1,12 @@
 {
   "name": "@tatsutakein/project-boilerplate",
+  "version": "0.1.0",
+  "description": "Boilerplate at the time of my project creation.",
+  "license": "MIT",
+  "author": {
+    "name": "Ryo Takeuchi",
+    "url": "https://tatsutakein.jp"
+  },
   "type": "module",
   "scripts": {
     "clean": "git clean -xdf node_modules",
