@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/tatsutakein/project-boilerplate/compare/v0.3.0...v0.4.0) (2024-03-02)
+
+
+### Features
+
+* renovate の構成ファイルをカイゼン ([545916b](https://github.com/tatsutakein/project-boilerplate/commit/545916b41757c1524d29fddf83a215f2997af1c3))
+
 ## [0.3.0](https://github.com/tatsutakein/project-boilerplate/compare/v0.2.0...v0.3.0) (2024-03-02)
 
 
