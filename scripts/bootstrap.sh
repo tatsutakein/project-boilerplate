@@ -71,20 +71,20 @@ fi
 
 ##############################################################################
 ##
-##  husky
+##  lefthook
 ##
 ##############################################################################
 echo ""
-echo "🚀 husky install: Start"
-if type bun >/dev/null 2>&1; then
-  if bun husky; then
-    echo "✅ husky install: Success"
+echo "🚀 lefthook install: Start"
+if type lefthook >/dev/null 2>&1; then
+  if lefthook install; then
+    echo "✅ lefthook install: Success"
   else
-    echo "🚫 husky install: Failed"
+    echo "🚫 lefthook install: Failed"
   fi
 else
-  echo "⚠️ husky install: Skip bun because it could not be found."
-  echo "⚠️ husky install: This may be due to the fact that the mise installation has not been completed."
+  echo "⚠️ lefthook install: Skip bun because it could not be found."
+  echo "⚠️ lefthook install: This may be due to the fact that the mise installation has not been completed."
 fi
 
 ##############################################################################
