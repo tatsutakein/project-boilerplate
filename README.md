@@ -28,7 +28,6 @@ What is being processed by bootstrap is shown below.
 - Configuring git commit message templates
 - Installation of various tools by mise
 - Installation of dependencies by bun
-- Installation of husky by bun
 
 ### Add template
 
