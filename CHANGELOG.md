@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/tatsutakein/project-boilerplate/compare/v0.4.0...v0.4.1) (2024-03-05)
+
+
+### Bug Fixes
+
+* wc-changed の output が正しく反映されるよう修正 ([043ecf7](https://github.com/tatsutakein/project-boilerplate/commit/043ecf722bc3e0a9e70b96dc02ff0149f59ef639))
+
 ## [0.4.0](https://github.com/tatsutakein/project-boilerplate/compare/v0.3.0...v0.4.0) (2024-03-02)
 
 
