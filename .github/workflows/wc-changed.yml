@@ -4,7 +4,7 @@ on:
   workflow_call:
     outputs:
       actions:
-        value: ${{ jobs.changes.outputs.actions }}
+        value: ${{ jobs.changed.outputs.actions }}
 
 permissions:
   contents: read
