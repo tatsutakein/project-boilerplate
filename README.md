@@ -1,7 +1,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![dependabot](https://img.shields.io/badge/maintaied_with-dependabot-blue?logo=dependabot)](https://docs.github.com/en/code-security/dependabot)
 [![renovate](https://img.shields.io/badge/maintaied%20with-renovate-blue?logo=renovatebot)](https://app.renovatebot.com/dashboard)
-![GitHub last commit (branch)](https://img.shields.io/github/last-commit/tatsutakein/project-boilerplate)
+[![GitHub last commit (branch)](https://img.shields.io/github/last-commit/tatsutakein/project-boilerplate)](https://github.com/tatsutakein/project-boilerplate/commits/main/)
 
 # Project boilerplate
 
