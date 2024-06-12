@@ -5,34 +5,54 @@ changelog:
       - 'ignore for release'
 
   categories:
-    - title: 🛠 Breaking Changes
+    - title: 💥 Breaking Changes
       labels:
         - 'breaking change'
 
     - title: ✨ Features
       labels:
-        - '@type/feature'
+        - 'type/feature'
 
     - title: 🐛 Bug Fixes
       labels:
-        - '@type/fix'
-
-    - title: 📦 Improvements
-      labels:
-        - '@type/improve'
+        - 'type/fix'
 
     - title: 📚 Documentation
       labels:
-        - '@type/docs'
+        - 'type/docs'
 
-    - title: ⚙️ Maintenance
+    - title: 💎 Styles
       labels:
-        - '@type/ci'
+        - 'type/style'
 
-    - title: 👒 Dependencies
+    - title: 📦 Code Refactoring
+      labels:
+        - 'type/refactor'
+
+    - title: 🚀 Performance Improvements
+      labels:
+        - 'type/perf'
+
+    - title: 🚨 Tests
+      labels:
+        - 'type/test'
+
+    - title: 🛠 Builds
+      labels:
+        - 'type/build'
+
+    - title: ⚙️ Continuous Integrations
+      labels:
+        - 'type/ci'
+
+    - title: 🗑 Revert
+      labels:
+        - 'type/revert'
+
+    - title: 👒 Dependency Updates
       labels:
         - 'dependencies'
 
-    - title: 🏕 Other Changes
+    - title: 🔍 Other Changes
       labels:
         - '*'
