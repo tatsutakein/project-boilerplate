@@ -6,8 +6,9 @@ on:
   push:
     branches:
       - main
-    tags-ignore:
-      - '*'
+  schedule:
+    # AM 6:00(JST)
+    - cron: '0 21 * * *'
 
   # Release 作成
   pull_request:
@@ -23,7 +24,7 @@ concurrency:
 
 jobs:
   create-pr:
-    if: ${{ github.event_name != 'pull_request' }}
+    if: ${{ github.event_name != 'pull_request' && !contains(github.event.head_commit.message, 'workflows/release') }}
     runs-on: ubuntu-22.04
     timeout-minutes: 15
 
