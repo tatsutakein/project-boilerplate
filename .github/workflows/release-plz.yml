@@ -1,0 +1,128 @@
+name: 'release-plz'
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: release-plz
+
+jobs:
+  format:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+
+    steps:
+      # https://github.com/marketplace/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+      # https://github.com/marketplace/actions/create-github-app-token
+      - name: Create GitHub App Token
+        uses: actions/create-github-app-token@c8f55efbd427e7465d6da1106e7979bc8aaee856 # v1.10.1
+        id: app-token
+        with:
+          app-id: ${{ vars.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+
+      # https://github.com/marketplace/actions/github-script
+      - name: Get current version and create new version
+        id: get_version
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          result-encoding: string
+          script: |
+            const { data: file } = await github.rest.repos.getContent({
+              ...context.repo,
+              path: '.github/release-please-manifest.json',
+            });
+
+            const content = Buffer.from(file.content, 'base64').toString();
+            const manifest = JSON.parse(content);
+            const currentVersion = manifest["."];
+
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth() + 1;
+
+            const [major, minor, patch] = currentVersion.split('.').map(Number);
+            let newVersion;
+            if (major !== currentYear || minor !== currentMonth) {
+              newVersion = `${currentYear}.${currentMonth}.0`;
+            } else {
+              newVersion = `${major}.${minor}.${patch + 1}`;
+            }
+
+            return { currentVersion, newVersion };
+
+      # https://github.com/marketplace/actions/github-script
+      - name: Generate release notes
+        id: generate_notes
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          result-encoding: string
+          script: |
+            const newVersion = JSON.parse(process.env.GITHUB_CONTEXT).payload.steps.get_version.outputs.newVersion;
+            const releaseNotes = await github.rest.repos.generateReleaseNotes({
+              ...context.repo,
+              tag_name: `v${newVersion}`,
+            });
+            return releaseNotes.data.body;
+
+      # https://github.com/marketplace/actions/github-script
+      - name: Create pull request
+        id: create_pr
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            const newVersion = JSON.parse(process.env.GITHUB_CONTEXT).payload.steps.get_version.outputs.newVersion;
+            const branchName = `workflows/release/v${newVersion}`;
+
+            // Create a new branch
+            await github.rest.git.createRef({
+              ...context.repo,
+              ref: `refs/heads/${branchName}`,
+              sha: context.sha,
+            });
+
+            // Read and update the manifest file
+            const { data: file } = await github.rest.repos.getContent({
+              ...context.repo,
+              path: '.github/release-please-manifest.json',
+            });
+
+            const content = Buffer.from(file.content, 'base64').toString();
+            const manifest = JSON.parse(content);
+            manifest["."] = newVersion;
+            const newContent = Buffer.from(JSON.stringify(manifest, null, 2)).toString('base64');
+
+            // Update the file in the new branch
+            await github.rest.repos.createOrUpdateFileContents({
+              ...context.repo,
+              path: '.github/release-please-manifest.json',
+              message: `chore: release ${newVersion}`,
+              content: newContent,
+              sha: file.sha,
+              branch: branchName,
+            });
+
+            // Create a pull request
+            const pr = await github.rest.pulls.create({
+              ...context.repo,
+              title: `chore: release ${newVersion}`,
+              head: branchName,
+              base: 'main',
+              body: JSON.parse(process.env.GITHUB_CONTEXT).payload.steps.generate_notes.outputs.result,
+              maintainer_can_modify: true,
+            });
+
+            return pr.data.html_url;
+
+      - name: Display PR URL
+        run: |
+          echo "Pull Request URL: ${{ steps.create_pr.outputs.result }}"
