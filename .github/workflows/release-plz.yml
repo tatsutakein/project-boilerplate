@@ -6,8 +6,9 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - '.github/release-please-manifest.json'
+    tags-ignore:
+      - '*'
+
   # Release 作成
   pull_request:
     branches:
