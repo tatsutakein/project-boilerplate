@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/tatsutakein/project-boilerplate/compare/v0.4.2...v0.4.3) (2024-06-12)
+
+
+### Bug Fixes
+
+* **deps:** lefthook 1.6.10 -&gt; 1.6.15 ([392233f](https://github.com/tatsutakein/project-boilerplate/commit/392233ff978223283fca9ce2d4eda294b9b0fc28))
+
 ## [0.4.2](https://github.com/tatsutakein/project-boilerplate/compare/v0.4.1...v0.4.2) (2024-04-27)
 
 
