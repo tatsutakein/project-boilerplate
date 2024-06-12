@@ -73,24 +73,7 @@ jobs:
             return { currentVersion, newVersion };
 
       # https://github.com/marketplace/actions/github-script
-      - name: Existing branch
-        id: existing-branch
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-        with:
-          github-token: ${{ steps.app-token.outputs.token }}
-          result-encoding: string
-          script: |
-            const newVersion = '${{ fromJson(steps.get_version.outputs.result).newVersion }}';
-            const releaseBranchRef = await github.rest.git.getRef({
-              ...context.repo,
-              ref: `heads/workflows/release/v${newVersion}`,
-            });
-            console.log(`releaseBranchRef: ${JSON.stringify(releaseBranchRef)}`);
-            return releaseBranchRef.data;
-
-      # https://github.com/marketplace/actions/github-script
       - name: Generate release notes
-        if: ${{ steps.existing-branch.outputs.result == null }}
         id: generate_notes
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
@@ -105,8 +88,29 @@ jobs:
             return body;
 
       # https://github.com/marketplace/actions/github-script
+      - name: Existing branch
+        id: existing-branch
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          result-encoding: json
+          script: |
+            const newVersion = '${{ fromJson(steps.get_version.outputs.result).newVersion }}';
+            try {
+              const { data } = await github.rest.git.getRef({
+                ...context.repo,
+                ref: `heads/workflows/release/v${newVersion}`,
+              });
+              console.log(`data: ${JSON.stringify(data)}`);
+              return data;
+            } catch (error) {
+              console.log(`error: ${error}`);
+              return null;
+            }
+
+      # https://github.com/marketplace/actions/github-script
       - name: Create pull request
-        if: ${{ steps.existing-branch.outputs.result == null }}
+        if: ${{ steps.existing-branch.outputs.result == 'null' }}
         id: create_pr
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
@@ -165,8 +169,82 @@ jobs:
             return pr.data.html_url;
 
       - name: Display PR URL
+        if: ${{ steps.existing-branch.outputs.result == 'null' }}
         run: |
           echo "Pull Request URL: ${{ steps.create_pr.outputs.result }}"
+
+      # https://github.com/marketplace/actions/github-script
+      - name: Update pull request
+        if: ${{ steps.existing-branch.outputs.result != 'null' }}
+        id: update-pr
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            const mainRef = await github.rest.git.getRef({
+              ...context.repo,
+              ref: 'heads/main',
+            });
+
+            // Update branch
+            const newVersion = '${{fromJson(steps.get_version.outputs.result).newVersion}}';
+            const branchName = `workflows/release/v${newVersion}`;
+            await github.rest.git.updateRef({
+              ...context.repo,
+              ref: `heads/${branchName}`,
+              sha: mainRef.data.object.sha,
+              force: true,
+            });
+
+            const manifestFilePath = '.github/release-please-manifest.json';
+            if (!fs.existsSync(manifestFilePath)) {
+              throw new Error(`File not found: ${manifestFilePath}`);
+            }
+
+            const content = fs.readFileSync(manifestFilePath, 'utf8');
+            const manifest = JSON.parse(content);
+            manifest["."] = newVersion;
+            const newContent = Buffer.from(JSON.stringify(manifest, null, 2)).toString('base64');
+
+            // Get the current SHA of the file
+            const { data: file } = await github.rest.repos.getContent({
+              ...context.repo,
+              path: manifestFilePath,
+              ref: branchName,
+            });
+
+            // Update the file in the branch
+            await github.rest.repos.createOrUpdateFileContents({
+              ...context.repo,
+              path: manifestFilePath,
+              message: `chore: release ${newVersion}`,
+              content: newContent,
+              sha: file.sha,
+              branch: branchName,
+            });
+
+            // Get pull request
+            const { data } = await github.rest.pulls.list({
+              ...context.repo,
+              state: 'open',
+              head: `${context.repo.owner}:${branchName}`,
+            });
+
+            // Update pull request
+            const pr = data[0];
+            await github.rest.pulls.update({
+              ...context.repo,
+              pull_number: data[0].number,
+              body: `${{ steps.generate_notes.outputs.result }}`,
+              maintainer_can_modify: true,
+            });
+
+            return pr.html_url;
+
+      - name: Display PR URL
+        if: ${{ steps.existing-branch.outputs.result != 'null' }}
+        run: |
+          echo "Pull Request URL: ${{ steps.update-pr.outputs.result }}"
 
   create-release:
     if: ${{ github.event.pull_request.merged == true }}
