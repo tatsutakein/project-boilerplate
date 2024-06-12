@@ -1,16 +1,26 @@
 name: 'release-plz'
 
 on:
+  # PR 作成
   workflow_dispatch:
   push:
     branches:
       - main
+  # Release 作成
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+    paths:
+      - '.github/release-please-manifest.json'
 
 concurrency:
   group: release-plz
 
 jobs:
-  release-plz:
+  create-pr:
+    if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-22.04
     timeout-minutes: 15
 
@@ -139,3 +149,70 @@ jobs:
       - name: Display PR URL
         run: |
           echo "Pull Request URL: ${{ steps.create_pr.outputs.result }}"
+
+  create-release:
+    if: ${{ github.event.pull_request.merged == true }}
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+
+    steps:
+      # https://github.com/marketplace/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+      # https://github.com/marketplace/actions/create-github-app-token
+      - name: Create GitHub App Token
+        uses: actions/create-github-app-token@c8f55efbd427e7465d6da1106e7979bc8aaee856 # v1.10.1
+        id: app-token
+        with:
+          app-id: ${{ vars.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+
+      # https://github.com/marketplace/actions/github-script
+      - name: Get current version
+        id: get_version
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          result-encoding: string
+          script: |
+            const fs = require('fs');
+            const manifestFilePath = '.github/release-please-manifest.json';
+
+            if (!fs.existsSync(manifestFilePath)) {
+              throw new Error(`File not found: ${manifestFilePath}`);
+            }
+
+            const content = fs.readFileSync(manifestFilePath, 'utf8');
+            const manifest = JSON.parse(content);
+            return manifest["."];
+
+      # https://github.com/marketplace/actions/github-script
+      - name: Create release
+        id: create-release
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          result-encoding: string
+          script: |
+            const releaseVersion = '${{ steps.get_version.outputs.result }}';
+            const release = await github.rest.repos.createRelease({
+              ...context.repo,
+              tag_name: `v${releaseVersion}`,
+              generate_release_notes: true,
+            });
+
+            return release.data.html_url;
+
+      # https://github.com/marketplace/actions/github-script
+      - name: Comment on PR
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            const releaseHtmlUrl = '${{ steps.create-release.outputs.result }}';
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.payload.number,
+              body: `:robot: Release is at ${releaseHtmlUrl} :sunflower:`
+            });
