@@ -3,30 +3,51 @@ version: 1
 
 labels:
   # Type labels
-  - label: "@type/build"
-    title: '^build(?:\(.+\))?\!?:'
+  - label: "type/feature"
+    title: '^\[.*?\]\s*feat(?:\(.+?\))?\!?:'
 
-  - label: "@type/ci"
-    title: '^ci(?:\(.+\))?\!?:'
-    files:
-      - '\.github/.+'
-      - "scripts/.+"
-      - "tools/.+"
+  - label: "type/fix"
+    title: '^\[.*?\]\s*fix(?:\(.+?\))?\!?:'
 
-  - label: "@type/docs"
-    title: '^docs(?:\(.+\))?\!?:'
+  - label: "type/docs"
+    title: '^\[.*?\]\s*docs(?:\(.+?\))?\!?:'
     files:
       - "docs/.+"
       - "**/README.md$"
 
-  - label: "@type/feature"
-    title: '^feat(?:\(.+\))?\!?:'
+  - label: "type/style"
+    title: '^\[.*?\]\s*style(?:\(.+?\))?\!?:'
 
-  - label: "@type/fix"
-    title: '^fix(?:\(.+\))?\!?:'
+  - label: "type/refactor"
+    title: '^\[.*?\]\s*refactor(?:\(.+?\))?\!?:'
 
-  - label: "@type/improve"
-    title: '^(style|refactor|perf)(?:\(.+\))?\!?:'
+  - label: "type/perf"
+    title: '^\[.*?\]\s*perf(?:\(.+?\))?\!?:'
+
+  - label: "type/test"
+    title: '^\[.*?\]\s*test(?:\(.+?\))?\!?:'
+
+  - label: "type/build"
+    title: '^\[.*?\]\s*build(?:\(.+?\))?\!?:'
+    files:
+      - "**/package.json$"
+      - "**/bun.lockb$"
+
+  - label: "type/ci"
+    title: '^\[.*?\]\s*ci(?:\(.+?\))?\!?:'
+    files:
+      - '\.github/.+'
+      - "scripts/.+"
+      - "tools/.+"
+      - "Makefile"
+      - "plopfile.mjs"
+      - "renovate.json5"
+
+  - label: "type/chore"
+    title: '^\[.*?\]\s*chore(?:\(.+?\))?\!?:'
+
+  - label: "type/revert"
+    title: '^\[.*?\]\s*revert(?:\(.+?\))?\!?:'
 
   # Top Package labels
   - label: "@apps/backend"
