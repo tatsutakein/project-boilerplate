@@ -42,8 +42,8 @@ jobs:
           private-key: ${{ secrets.BOT_PRIVATE_KEY }}
 
       - name: Get new version
-        id: resolve-version
-        uses: ./.github/actions/resolve-new-version
+        id: resolve-versions
+        uses: ./.github/actions/resolve-versions
         with:
           github-token: ${{ steps.app-token.outputs.token }}
 
@@ -59,7 +59,7 @@ jobs:
             return await script({
               github,
               context,
-              version: '${{ steps.resolve-version.outputs.new-version }}'
+              version: '${{ steps.resolve-versions.outputs.new-version }}'
             });
 
       # https://github.com/marketplace/actions/github-script
@@ -70,7 +70,7 @@ jobs:
           github-token: ${{ steps.app-token.outputs.token }}
           result-encoding: json
           script: |
-            const newVersion = '${{ steps.resolve-version.outputs.new-version }}';
+            const newVersion = '${{ steps.resolve-versions.outputs.new-version }}';
             try {
               const { data } = await github.rest.git.getRef({
                 ...context.repo,
@@ -93,7 +93,7 @@ jobs:
           script: |
             const fs = require('fs');
 
-            const newVersion = '${{ steps.resolve-version.outputs.new-version }}';
+            const newVersion = '${{ steps.resolve-versions.outputs.new-version }}';
             const branchName = `workflows/release/v${newVersion}`;
 
             // Create a new branch
@@ -163,7 +163,7 @@ jobs:
             });
 
             // Update branch
-            const newVersion = '${{ steps.resolve-version.outputs.new-version }}';
+            const newVersion = '${{ steps.resolve-versions.outputs.new-version }}';
             const branchName = `workflows/release/v${newVersion}`;
             await github.rest.git.updateRef({
               ...context.repo,
@@ -241,8 +241,8 @@ jobs:
           private-key: ${{ secrets.BOT_PRIVATE_KEY }}
 
       - name: Get new version
-        id: resolve-version
-        uses: ./.github/actions/resolve-new-version
+        id: resolve-versions
+        uses: ./.github/actions/resolve-versions
         with:
           github-token: ${{ steps.app-token.outputs.token }}
 
@@ -254,7 +254,7 @@ jobs:
           github-token: ${{ steps.app-token.outputs.token }}
           result-encoding: string
           script: |
-            const releaseVersion = '${{ steps.resolve-version.outputs.new-version }}';
+            const releaseVersion = '${{ steps.resolve-versions.outputs.current-version }}';
             const release = await github.rest.repos.createRelease({
               ...context.repo,
               tag_name: `v${releaseVersion}`,
