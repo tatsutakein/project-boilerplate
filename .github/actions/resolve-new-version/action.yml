@@ -27,7 +27,7 @@ runs:
         github-token: ${{ inputs.github-token }}
         result-encoding: string
         script: |
-          const manifestFilePath = core.getOptionalInput('manifest-file') || '.github/release-please-manifest.json';
+          const manifestFilePath = core.getInput('manifest-file') || '.github/release-please-manifest.json';
 
           const fs = require('fs');
           if (!fs.existsSync(manifestFilePath)) {
