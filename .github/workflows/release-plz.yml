@@ -41,16 +41,11 @@ jobs:
           app-id: ${{ vars.BOT_APP_ID }}
           private-key: ${{ secrets.BOT_PRIVATE_KEY }}
 
-      # https://github.com/marketplace/actions/github-script
-      - name: Get current version and create new version
-        id: get_version
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      - name: Get new version
+        id: resolve-version
+        uses: ./.github/actions/resolve-new-version
         with:
           github-token: ${{ steps.app-token.outputs.token }}
-          result-encoding: string
-          script: |
-            const script = require('./.github/scripts/resolve-version.cjs');
-            return await script();
 
       # https://github.com/marketplace/actions/github-script
       - name: Generate release notes
@@ -64,7 +59,7 @@ jobs:
             return await script({
               github,
               context,
-              version: '${{ steps.get_version.outputs.result }}'
+              version: '${{ steps.resolve-version.outputs.new-version }}'
             });
 
       # https://github.com/marketplace/actions/github-script
@@ -75,7 +70,7 @@ jobs:
           github-token: ${{ steps.app-token.outputs.token }}
           result-encoding: json
           script: |
-            const newVersion = '${{ steps.get_version.outputs.result }}';
+            const newVersion = '${{ steps.resolve-version.outputs.new-version }}';
             try {
               const { data } = await github.rest.git.getRef({
                 ...context.repo,
@@ -98,7 +93,7 @@ jobs:
           script: |
             const fs = require('fs');
 
-            const newVersion = '${{ steps.get_version.outputs.result }}';
+            const newVersion = '${{ steps.resolve-version.outputs.new-version }}';
             const branchName = `workflows/release/v${newVersion}`;
 
             // Create a new branch
@@ -168,7 +163,7 @@ jobs:
             });
 
             // Update branch
-            const newVersion = '${{ steps.get_version.outputs.result }}';
+            const newVersion = '${{ steps.resolve-version.outputs.new-version }}';
             const branchName = `workflows/release/v${newVersion}`;
             await github.rest.git.updateRef({
               ...context.repo,
@@ -245,24 +240,11 @@ jobs:
           app-id: ${{ vars.BOT_APP_ID }}
           private-key: ${{ secrets.BOT_PRIVATE_KEY }}
 
-      # https://github.com/marketplace/actions/github-script
-      - name: Get current version
-        id: get_version
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      - name: Get new version
+        id: resolve-version
+        uses: ./.github/actions/resolve-new-version
         with:
           github-token: ${{ steps.app-token.outputs.token }}
-          result-encoding: string
-          script: |
-            const fs = require('fs');
-            const manifestFilePath = '.github/release-please-manifest.json';
-
-            if (!fs.existsSync(manifestFilePath)) {
-              throw new Error(`File not found: ${manifestFilePath}`);
-            }
-
-            const content = fs.readFileSync(manifestFilePath, 'utf8');
-            const manifest = JSON.parse(content);
-            return manifest["."];
 
       # https://github.com/marketplace/actions/github-script
       - name: Create release
@@ -272,7 +254,7 @@ jobs:
           github-token: ${{ steps.app-token.outputs.token }}
           result-encoding: string
           script: |
-            const releaseVersion = '${{ steps.get_version.outputs.result }}';
+            const releaseVersion = '${{ steps.resolve-version.outputs.new-version }}';
             const release = await github.rest.repos.createRelease({
               ...context.repo,
               tag_name: `v${releaseVersion}`,
