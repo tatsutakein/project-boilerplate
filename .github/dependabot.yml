@@ -9,6 +9,7 @@ updates:
     directory: '/'
     schedule:
       interval: weekly
+    open-pull-requests-limit: 0 # Renovate との競合を避けるために 0 に設定
     labels:
       - 'dependencies'
       - 'ignore for release'
