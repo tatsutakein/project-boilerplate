@@ -25,7 +25,7 @@ concurrency:
 jobs:
   create-pr:
     if: ${{ github.event_name != 'pull_request' && !contains(github.event.head_commit.message, 'workflows/release') }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
 
     steps:
@@ -224,7 +224,7 @@ jobs:
 
   create-release:
     if: ${{ github.event.pull_request.merged == true }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
 
     steps:
