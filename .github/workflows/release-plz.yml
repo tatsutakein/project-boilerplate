@@ -114,6 +114,32 @@ jobs:
             manifest["."] = newVersion;
             const newContent = Buffer.from(JSON.stringify(manifest, null, 2)).toString('base64');
 
+            // パッケージJSONの更新
+            const packageJsonPath = 'package.json';
+            if (fs.existsSync(packageJsonPath)) {
+              const packageJsonContent = fs.readFileSync(packageJsonPath, 'utf8');
+              const packageJson = JSON.parse(packageJsonContent);
+              packageJson.version = newVersion;
+              const newPackageJsonContent = Buffer.from(JSON.stringify(packageJson, null, 2)).toString('base64');
+              
+              // Get the current SHA of package.json
+              const { data: packageJsonFile } = await github.rest.repos.getContent({
+                ...context.repo,
+                path: packageJsonPath,
+                ref: branchName,
+              });
+
+              // Update package.json
+              await github.rest.repos.createOrUpdateFileContents({
+                ...context.repo,
+                path: packageJsonPath,
+                message: `chore: update package.json version to ${newVersion}`,
+                content: newPackageJsonContent,
+                sha: packageJsonFile.sha,
+                branch: branchName,
+              });
+            }
+
             // Get the current SHA of the file
             const { data: file } = await github.rest.repos.getContent({
               ...context.repo,
@@ -208,6 +234,32 @@ jobs:
             const manifest = JSON.parse(content);
             manifest["."] = newVersion;
             const newContent = Buffer.from(JSON.stringify(manifest, null, 2)).toString('base64');
+
+            // パッケージJSONの更新
+            const packageJsonPath = 'package.json';
+            if (fs.existsSync(packageJsonPath)) {
+              const packageJsonContent = fs.readFileSync(packageJsonPath, 'utf8');
+              const packageJson = JSON.parse(packageJsonContent);
+              packageJson.version = newVersion;
+              const newPackageJsonContent = Buffer.from(JSON.stringify(packageJson, null, 2)).toString('base64');
+              
+              // Get the current SHA of package.json
+              const { data: packageJsonFile } = await github.rest.repos.getContent({
+                ...context.repo,
+                path: packageJsonPath,
+                ref: branchName,
+              });
+
+              // Update package.json
+              await github.rest.repos.createOrUpdateFileContents({
+                ...context.repo,
+                path: packageJsonPath,
+                message: `chore: update package.json version to ${newVersion}`,
+                content: newPackageJsonContent,
+                sha: packageJsonFile.sha,
+                branch: branchName,
+              });
+            }
 
             // Get the current SHA of the file after reset
             const { data: file } = await github.rest.repos.getContent({
