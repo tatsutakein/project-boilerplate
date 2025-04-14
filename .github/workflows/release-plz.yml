@@ -109,55 +109,80 @@ jobs:
               throw new Error(`File not found: ${manifestFilePath}`);
             }
 
+            // manifest.jsonの更新準備
             const content = fs.readFileSync(manifestFilePath, 'utf8');
             const manifest = JSON.parse(content);
             manifest["."] = newVersion;
             const newManifestContent = JSON.stringify(manifest, null, 2);
-
-            // 1つのコミットで両方のファイルを更新するためのデータ準備
-            const updates = [];
-            
-            // manifest.jsonの更新準備
-            updates.push({
-              path: manifestFilePath,
-              content: newManifestContent,
-            });
             
             // package.jsonの更新準備
+            let hasPackageJson = false;
+            let packageJsonContent = '';
             const packageJsonPath = 'package.json';
             if (fs.existsSync(packageJsonPath)) {
-              const packageJsonContent = fs.readFileSync(packageJsonPath, 'utf8');
-              const packageJson = JSON.parse(packageJsonContent);
+              hasPackageJson = true;
+              const packageJsonRawContent = fs.readFileSync(packageJsonPath, 'utf8');
+              const packageJson = JSON.parse(packageJsonRawContent);
               packageJson.version = newVersion;
-              const newPackageJsonContent = JSON.stringify(packageJson, null, 2);
-              
-              updates.push({
+              packageJsonContent = JSON.stringify(packageJson, null, 2);
+            }
+
+            // 現在のブランチの最新コミットを取得
+            const { data: refData } = await github.rest.git.getRef({
+              ...context.repo,
+              ref: `heads/${branchName}`,
+            });
+            const currentCommitSha = refData.object.sha;
+
+            // 現在のコミットのツリーを取得
+            const { data: commitData } = await github.rest.git.getCommit({
+              ...context.repo,
+              commit_sha: currentCommitSha,
+            });
+            const currentTreeSha = commitData.tree.sha;
+
+            // 新しいツリーを作成するためのツリーアイテムを準備
+            const treeItems = [];
+
+            // manifest.jsonのツリーアイテムを追加
+            treeItems.push({
+              path: manifestFilePath,
+              mode: '100644',
+              type: 'blob',
+              content: newManifestContent,
+            });
+
+            // package.jsonのツリーアイテムを追加（存在する場合）
+            if (hasPackageJson) {
+              treeItems.push({
                 path: packageJsonPath,
-                content: newPackageJsonContent,
+                mode: '100644',
+                type: 'blob',
+                content: packageJsonContent,
               });
             }
-            
-            // 各ファイルのSHAを取得
-            for (let i = 0; i < updates.length; i++) {
-              const { data: fileData } = await github.rest.repos.getContent({
-                ...context.repo,
-                path: updates[i].path,
-                ref: branchName,
-              });
-              updates[i].sha = fileData.sha;
-            }
-            
-            // 各ファイルを個別に更新（同じコミットメッセージで）
-            for (const update of updates) {
-              await github.rest.repos.createOrUpdateFileContents({
-                ...context.repo,
-                path: update.path,
-                message: `chore: release ${newVersion}`,
-                content: Buffer.from(update.content).toString('base64'),
-                sha: update.sha,
-                branch: branchName,
-              });
-            }
+
+            // 新しいツリーを作成
+            const { data: newTree } = await github.rest.git.createTree({
+              ...context.repo,
+              base_tree: currentTreeSha,
+              tree: treeItems,
+            });
+
+            // 新しいコミットを作成
+            const { data: newCommit } = await github.rest.git.createCommit({
+              ...context.repo,
+              message: `chore: release ${newVersion}`,
+              tree: newTree.sha,
+              parents: [currentCommitSha],
+            });
+
+            // ブランチの参照を更新
+            await github.rest.git.updateRef({
+              ...context.repo,
+              ref: `heads/${branchName}`,
+              sha: newCommit.sha,
+            });
 
             // Create a pull request
             const pr = await github.rest.pulls.create({
