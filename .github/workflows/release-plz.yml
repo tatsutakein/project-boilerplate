@@ -140,6 +140,13 @@ jobs:
               body: `${{ steps.generate_notes.outputs.result }}`,
             });
 
+            // ラベルを追加
+            await github.rest.issues.addLabels({
+              ...context.repo,
+              issue_number: pr.data.number,
+              labels: ['ignore for release']
+            });
+
             return pr.data.html_url;
 
       - name: Display PR URL
