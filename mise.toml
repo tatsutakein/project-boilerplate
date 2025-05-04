@@ -1,3 +1,8 @@
 [tools]
 bun = "1.2.11"
 node = "22.15.0"
+
+[tasks.bootstrap]
+description = "Initialize the workspace."
+run = './tools/bootstrap.sh'
+alias = "bs"
