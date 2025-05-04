@@ -5,6 +5,6 @@ import { RuleConfigSeverity } from '@commitlint/types';
 export default {
   extends: ['@commitlint/config-conventional'],
   rules: {
-    'subject-case': [RuleConfigSeverity.Error, 'never', ['upper-case']],
+    'subject-case': [RuleConfigSeverity.Disabled, 'never', []],
   },
 } satisfies UserConfig;
