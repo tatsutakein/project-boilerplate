@@ -10,13 +10,13 @@
   "type": "module",
   "scripts": {
     "clean": "git clean -xdf node_modules",
-    "plop": "plop"
+    "scaffold": "scaffdog"
   },
   "devDependencies": {
     "@commitlint/cli": "19.8.0",
     "@commitlint/config-conventional": "19.8.0",
     "@commitlint/types": "19.8.0",
     "lefthook": "1.11.12",
-    "plop": "4.0.1"
+    "scaffdog": "4.1.0"
   }
 }
