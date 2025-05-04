@@ -6,3 +6,9 @@ node = "22.15.0"
 description = "Initialize the workspace."
 run = './tools/bootstrap.sh'
 alias = "bs"
+
+[tasks.clean]
+description = "Clean this workspace."
+run = [
+    'bun run clean',
+]
