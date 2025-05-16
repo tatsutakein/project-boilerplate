@@ -13,10 +13,10 @@
     "scaffold": "scaffdog"
   },
   "devDependencies": {
-    "@commitlint/cli": "19.8.0",
-    "@commitlint/config-conventional": "19.8.0",
-    "@commitlint/types": "19.8.0",
-    "lefthook": "1.11.12",
+    "@commitlint/cli": "19.8.1",
+    "@commitlint/config-conventional": "19.8.1",
+    "@commitlint/types": "19.8.1",
+    "lefthook": "1.11.13",
     "scaffdog": "4.1.0"
   }
 }
