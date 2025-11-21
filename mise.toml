@@ -1,6 +1,6 @@
 [tools]
 bun = "1.2.12"
-node = "22.15.0"
+node = "22.21.1"
 
 [tasks.bootstrap]
 description = "Initialize the workspace."
