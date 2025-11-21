@@ -13,9 +13,9 @@
     "scaffold": "scaffdog"
   },
   "devDependencies": {
-    "@commitlint/cli": "19.8.0",
-    "@commitlint/config-conventional": "19.8.0",
-    "@commitlint/types": "19.8.0",
+    "@commitlint/cli": "20.1.0",
+    "@commitlint/config-conventional": "20.0.0",
+    "@commitlint/types": "20.0.0",
     "lefthook": "2.0.4",
     "scaffdog": "4.1.0"
   }
